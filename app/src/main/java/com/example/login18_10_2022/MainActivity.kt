@@ -3,16 +3,42 @@ package com.example.login18_10_2022
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import com.example.login18_10_2022.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    companion object KEYS {
+        val NOMBRE = "nombre"
+        val PASSWORD = "pass"
+        val VALOR = "valor"
+    }
+    private val responseLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        when(it.resultCode) {
+            RESULT_OK -> {
+                //Recogemos los datos
+                nombre = it.data?.getStringExtra(NOMBRE).toString()
+                valor = it.data?.getIntExtra(VALOR, 0).toString()
+                mostrarToast("$nombre ha devuelto $valor")
+            }
+            RESULT_CANCELED -> {
+                mostrarToast("El usuario ha cancelado")
+            }
+        }
+    }
+
+    private fun mostrarToast(s: String) {
+        Toast.makeText(this, s, Toast.LENGTH_LONG).show()
+    }
+
     lateinit var binding: ActivityMainBinding
     val usuarios = arrayOf("Admin", "Ana", "Juan")
     val password = arrayOf("secret0", "passAna", "passJuan")
-
     var nombre = ""
     var pass = ""
+    var valor = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -57,11 +83,21 @@ class MainActivity : AppCompatActivity() {
         when (i) {
             2 -> {
                 val i = Intent(this, MainActivity2::class.java)
-                startActivity(i)
+                val bundle = Bundle().apply {
+                    putString(NOMBRE, nombre)
+                    putString(PASSWORD, pass)
+                }
+                i.putExtras(bundle)
+                responseLauncher.launch(i)
             }
             3 -> {
                 val i = Intent(this, MainActivity3::class.java)
-                startActivity(i)
+                val bundle = Bundle().apply {
+                    putString(NOMBRE, nombre)
+                    putString(PASSWORD, pass)
+                }
+                i.putExtras(bundle)
+                responseLauncher.launch(i)
             }
         }
     }

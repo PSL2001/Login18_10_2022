@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Login18_10_2022</string>
+    <string name="tvValor">Valor %s</string>
 </resources>
