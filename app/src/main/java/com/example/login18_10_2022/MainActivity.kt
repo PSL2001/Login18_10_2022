@@ -9,12 +9,13 @@ import androidx.appcompat.app.AlertDialog
 import com.example.login18_10_2022.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-
+    //Claves constantes para activities
     companion object KEYS {
         val NOMBRE = "nombre"
         val PASSWORD = "pass"
         val VALOR = "valor"
     }
+    //Variable para lidiar con los resultados de los activities
     private val responseLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         when(it.resultCode) {
             RESULT_OK -> {
@@ -28,12 +29,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
+    /*
+     * E: String
+     * S: Nada; Muestra un toast con el texto que le pasamos
+     */
     private fun mostrarToast(s: String) {
         Toast.makeText(this, s, Toast.LENGTH_LONG).show()
     }
-
-    lateinit var binding: ActivityMainBinding
+    //Variables
+    lateinit var binding: ActivityMainBinding //Creamos un binding para este activity
+    //Los arrays para los usuarios
     val usuarios = arrayOf("Admin", "Ana", "Juan")
     val password = arrayOf("secret0", "passAna", "passJuan")
     var nombre = ""
@@ -41,44 +46,70 @@ class MainActivity : AppCompatActivity() {
     var valor = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Inflamos el binding con los objetos del layout
         binding = ActivityMainBinding.inflate(layoutInflater)
+        //Mostramos el contenido al usuario
         setContentView(binding.root)
+        //Ponemos los listeners
         setListeners()
     }
     //---------------------------------------------------------------------------------------------
+    /*
+     * Añade listeners para todos los campos interesados
+     *
+     * E: Nada
+     * S: Nada
+     */
     private fun setListeners() {
         binding.btnLogin.setOnClickListener {
+            //Cuando se pulse el btnLogin se llama a la funcion correspondiente
             login()
         }
     }
-
+    /*
+     * Comprueba los datos y si estos son correctos, vamos al activity correspondiente
+     * E: Nada
+     * S: Nada
+     */
     private fun login() {
+        //Primero comprobamos que nombre no está vacio
         nombre = binding.etUsuario.text.toString().trim()
-        if (nombre.isEmpty()) {
+        if (nombre.isEmpty()) { //Si se diera el caso, entonces
+            //Ponemos un error y decimos al usuario que este campo es obligatorio
             binding.etUsuario.setError("Este campo es obligatorio")
             binding.etUsuario.requestFocus()
+            //Y salimos
             return
         }
+        //Hacemos lo mismo para la password
         pass = binding.etPass.text.toString()
         if (pass.isEmpty()) {
             binding.etPass.setError("Este campo es obligatorio")
             binding.etPass.requestFocus()
             return
         }
-        if (comprobarLogin(nombre, pass)) {
-            if (nombre == "Admin") {
+        //Si hemos llegado aqui entonces ni el usuario ni la contraseña estan vacios
+        if (comprobarLogin(nombre, pass)) { //Comprobamos si el login es correcto
+            //Si es el caso entonces comprobamos si el nombre es "Admin"
+            if (nombre == "Admin") { //Si se da ese caso
                 //Nos vamos al activity 2
                 irActivity(2)
-            } else {
+            } else { //En otro caso
                 //Nos vamos al activity 3
                 irActivity(3)
             }
-        } else {
+        } else { //Si el login no es correcto
+            //Entonces mostramos un error
             mostrarError("Usuario o Contraseña incorrectos")
         }
 
     }
-
+    //---------------------------------------------------------------------------------------------
+    /*
+     * Dependiendo sobre que numero se le pase al parametro, ira a un activity u otro
+     * E: Integer
+     * S: Nada
+     */
     private fun irActivity(i: Int) {
         when (i) {
             2 -> {
@@ -103,8 +134,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     //---------------------------------------------------------------------------------------------
+    /*
+     * La funcion muestra una alerta de error con un mensaje
+     * E: String
+     * S: Nada
+     */
     private fun mostrarError(s: String) {
-        val alerta = AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle("** ERROR **")
             .setMessage(s)
             .setPositiveButton("ACEPTAR", null)
